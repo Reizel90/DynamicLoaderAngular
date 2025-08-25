@@ -1,0 +1,14 @@
+
+<!-- cdkDrag
+[cdkDragFreeDragPosition]="{ x: item.x, y: item.y }"
+(cdkDragEnded)="onDragEnd($event)" -->
+<!-- cdkDragBoundary=".canvas" -->
+<span
+  class="canvas-item"
+  (click)="onClick($event)"
+  (contextmenu)="onContextMenu($event)"
+  [class.selected]="selected"
+>
+  <!-- {{ item.label }} -->
+  <ng-container #container></ng-container>
+</span>

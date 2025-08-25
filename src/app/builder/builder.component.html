@@ -1,0 +1,57 @@
+<div class="wrapper">
+  <!-- PALETTE -->
+  <div
+    class="palette"
+    cdkDropList
+    id="paletteList"
+    [cdkDropListConnectedTo]="['canvasList']"
+    cdkDropListSortingDisabled>
+    <h4>Palette</h4>
+    <div
+      *ngFor="let item of availableComponents"
+      class="palette-item"
+      cdkDrag
+      [cdkDragData]="item">
+      {{ item.label }}
+    </div>
+
+    <h4>Salva / Carica JSON</h4>
+    <button (click)="exportToJson()">Salva</button>
+    <button (click)="importFromJson()">Carica</button>
+    <textarea [(ngModel)]="jsonExport" rows="8"></textarea>
+  </div>
+
+  <!-- CANVAS (rimuovi qui cdkDrag e cdkDragFreeDragPosition) -->
+  <div
+    #canvasContainer
+    class="canvas"
+    cdkDropList
+    id="canvasList"
+    [cdkDropListConnectedTo]="['paletteList']"
+    (cdkDropListDropped)="onCanvasDrop($event)">
+    <app-canvas-item
+      *ngFor="let item of canvasItems"
+      class="canvas-item"
+      [item]="item"
+      [selected]="selectedItem?.id === item.id"
+      (itemSelected)="selectItem(item)"
+      (itemDragEnd)="updateItemPosition(item, $event)">
+    </app-canvas-item>
+  </div>
+
+  <!-- EDITOR PROPRIETÀ -->
+  <div class="editor" *ngIf="selectedItem">
+    <h4>Editor Proprietà</h4>
+    <p>{{ selectedItem.label }}</p>
+    <ng-container *ngFor="let key of selectedItemKeys">
+      <label>
+        {{ key }}:
+        <input
+          type="text"
+          [(ngModel)]="selectedItem.ref[key]"
+        />
+      </label>
+    </ng-container>
+    <button class="danger" (click)="deleteSelectedItem()">Elimina</button>
+  </div>
+</div>

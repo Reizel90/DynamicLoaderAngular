@@ -1,0 +1,10 @@
+<div class="config-selector">
+  <button *ngFor="let key of configKeys" (click)="selectedConfigKeySafe = key">
+    {{ pageConfigurations[key].title }}
+  </button>
+</div>
+
+<app-dynamic-renderer
+  *ngIf="showLoader"
+  [elementsJSON]="selectedConfigJSON"
+></app-dynamic-renderer>

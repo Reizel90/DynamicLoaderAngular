@@ -1,0 +1,52 @@
+
+.wrapper {
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.palette {
+  width: 220px;
+  border-right: 1px solid #ccc;
+  padding: 10px;
+  background-color: #f7f7f7;
+}
+
+.palette-item {
+  margin-bottom: 8px;
+  padding: 8px;
+  background-color: #e0e0e0;
+  border: 1px solid #b0b0b0;
+  border-radius: 4px;
+  cursor: grab;
+  user-select: none;
+}
+
+.canvas {
+  flex: 1;
+  position: relative;
+  background-color: #eef2f7;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.editor {
+  width: 250px;
+  border-left: 1px solid #ccc;
+  padding: 10px;
+  background-color: #f1f1f1;
+}
+
+.editor input {
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 6px;
+}
+
+button.danger {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+}
