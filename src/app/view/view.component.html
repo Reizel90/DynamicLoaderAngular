@@ -1,3 +1,12 @@
+<div class="header">
+  <h1>Dynamic Loader Angular</h1>
+  <nav>
+    <a routerLink="/view" routerLinkActive="active">Viewer</a>
+    <a routerLink="/builder">Visual Builder</a>
+    <a routerLink="/config">Config Editor</a>
+  </nav>
+</div>
+
 <div class="config-selector">
   <button *ngFor="let key of configKeys" (click)="selectedConfigKeySafe = key">
     {{ pageConfigurations[key].title }}
@@ -6,5 +15,5 @@
 
 <app-dynamic-renderer
   *ngIf="showLoader"
-  [elementsJSON]="selectedConfigJSON"
+  [nodes]="nodes"
 ></app-dynamic-renderer>

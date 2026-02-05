@@ -3,8 +3,8 @@ import { ConfigAccessGuard } from './config-access.guard';
 
 export const routes: Routes = [
   {
-    path: 'config',
-    loadComponent: () => import('./builder/builder.component').then(m => m.BuilderComponent),
+    path: 'builder',
+    loadComponent: () => import('./config-builder/config-builder.component').then(m => m.ConfigBuilderComponent),
     canActivate: [ConfigAccessGuard],
   },
   {

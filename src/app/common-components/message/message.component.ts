@@ -1,18 +1,16 @@
-
 import { Component, Input } from '@angular/core';
-import { CanvasBaseComponent } from '../common-components.interface';
+import { DynamicComponentApi } from '../common-components.interface';
 
 @Component({
   selector: 'app-message',
-  standalone: true,
-  template: `<span>{{ message }}</span>`
+  template: ` <div>{{ message }}</div> `
 })
-export class MessageComponent extends CanvasBaseComponent {
+export class MessageComponent implements DynamicComponentApi {
+  @Input() id!: string;
+  @Input() message = '';
 
-  @Input() message: string = 'messaggio';
-
-  setValue(val: string) {
-    this.message = val;
+  setValue(v: any) {
+    this.message = String(v ?? '');
   }
 
   getValue() {

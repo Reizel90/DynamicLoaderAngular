@@ -1,49 +1,33 @@
 import { Injectable, Type } from '@angular/core';
-import { GoodbyeWorldComponent } from '../common-components/goodbye-world/goodbye-world.component';
-import { HelloWorldComponent } from '../common-components/hello-world/hello-world.component';
-import { ButtonComponent } from '../common-components/button/button.component';
+import { UnknownComponent } from '../common-components/unknown/unknown.component';
+
+import { RowComponent } from '../common-components/row/row.component';
+import { ColumnComponent } from '../common-components/column/column.component';
+import { SectionComponent } from '../common-components/section/section.component';
 import { DynamicInputComponent } from '../common-components/dynamic-input/dynamic-input.component';
 import { DynamicCheckboxComponent } from '../common-components/dynamic-checkbox/dynamic-checkbox.component';
-import { InputComponent } from '../common-components/input/input.component';
+import { ButtonComponent } from '../common-components/button/button.component';
 import { MessageComponent } from '../common-components/message/message.component';
-import { SectionComponent } from '../common-components/section/section.component';
-import { ColumnComponent } from '../common-components/column/column.component';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ComponentsMapService {
-  private componentMap: { [key: string]: Type<any> } = {
-    'HelloWorld': HelloWorldComponent,
-    'GoodbyeWorld': GoodbyeWorldComponent,
-    'Button': ButtonComponent,
-    'DynamicInput': DynamicInputComponent,
-    'DynamicCheckbox': DynamicCheckboxComponent,
-    'input': InputComponent,
-    'message': MessageComponent,
-    'button': ButtonComponent,
-    'section': SectionComponent,
-    'column': ColumnComponent
-  };
+  private readonly map = new Map<string, Type<any>>([
+    ['row', RowComponent],
+    ['column', ColumnComponent],
+    ['section', SectionComponent],
 
-  getComponentByName(name: string) {
-    return this.componentMap[name];
-  }
+    // alias utili
+    ['input', DynamicInputComponent],
+    ['dynamic-input', DynamicInputComponent],
 
-  getAvailableComponents(): { type: string; label: string }[] {
-    const availableTypes = [
-      'section',
-      'column',
-      'message',
-      'input',
-      'button',
-    ];
-    return availableTypes
-      .filter(type => this.componentMap[type])
-      .map(type => ({ type, label: this.toLabel(type) }));
-  }
+    ['checkbox', DynamicCheckboxComponent],
+    ['dynamic-checkbox', DynamicCheckboxComponent],
 
-  private toLabel(type: string): string {
-    return type.charAt(0).toUpperCase() + type.slice(1);
+    ['button', ButtonComponent],
+    ['message', MessageComponent],
+  ]);
+
+  resolve(type: string): Type<any> {
+    return this.map.get(type) ?? UnknownComponent;
   }
 }

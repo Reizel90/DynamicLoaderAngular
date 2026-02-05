@@ -19,6 +19,14 @@ export interface PositionConfig {
   left?: string;     // e.g. "20px"
   zIndex?: number;
 }
+export interface DynamicComponentApi {
+  /** id dal config */
+  id: string;
+
+  /** opzionale: per field/message */
+  getValue?: () => any;
+  setValue?: (v: any) => void;
+}
 
 
 @Directive() // Base class for canvas items

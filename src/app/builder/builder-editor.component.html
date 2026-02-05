@@ -1,0 +1,180 @@
+<div class="builder-container">
+  <!-- Pannello Sinistra: Componenti Disponibili -->
+  <div class="left-panel">
+    <div class="panel-header">🧩 Componenti</div>
+    <div
+      class="components-list"
+      cdkDropList
+      #componentsList
+      [cdkDropListData]="availableComponents"
+      cdkDropListSortingDisabled
+    >
+      <div
+        *ngFor="let comp of availableComponents"
+        [attr.data-component]="comp.type"
+        class="component-item"
+        cdkDrag
+        [cdkDragData]="comp"
+      >
+        {{ comp.label }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Pannello Centro: Canvas -->
+  <div class="center-panel">
+    <div class="canvas-header">
+      <h2>📐 Canvas</h2>
+      <button (click)="clearCanvas()" class="btn-danger">Pulisci</button>
+    </div>
+    <div
+      class="canvas"
+      cdkDropList
+      #canvasList
+      [cdkDropListData]="elements"
+      [cdkDropListConnectedTo]="connectedLists"
+      (cdkDropListDropped)="onCanvasDrop($event)"
+    >
+      <div *ngIf="elements.length === 0" class="empty-state">
+        Trascina elementi qui →
+      </div>
+      <div
+        *ngFor="let element of elements; let idx = index"
+        class="canvas-element"
+        [ngClass]="{ selected: selectedElement === element }"
+        (click)="selectElement(element)"
+        cdkDrag
+      >
+        <div class="element-header">
+          {{ element.type }} <small>#{{ element.id }}</small>
+          <button (click)="removeElement(idx)" class="btn-remove">✕</button>
+        </div>
+        <div
+          *ngIf="element.children && element.children.length > 0"
+          class="children-container"
+          cdkDropList
+          [cdkDropListData]="element.children"
+          (cdkDropListDropped)="onChildDrop($event, element)"
+        >
+          <ng-container
+            *ngTemplateOutlet="
+              renderChildren;
+              context: { children: element.children, parent: element }
+            "
+          ></ng-container>
+        </div>
+        <div
+          *ngIf="!element.children || element.children.length === 0"
+          class="drop-zone"
+          cdkDropList
+          [cdkDropListData]="element.children || []"
+          (cdkDropListDropped)="onChildDrop($event, element)"
+        >
+          Trascina figli qui
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pannello Destro: Proprietà + JSON -->
+  <div class="right-panel">
+    <div class="panel-header">⚙️ Proprietà</div>
+    <div *ngIf="selectedElement" class="properties-form">
+      <div class="form-group">
+        <label>ID</label>
+        <input type="text" [(ngModel)]="selectedElement['id']" disabled />
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <input type="text" [(ngModel)]="selectedElement['type']" disabled />
+      </div>
+      <div *ngIf="selectedElement['title']" class="form-group">
+        <label>Titolo</label>
+        <input type="text" [(ngModel)]="selectedElement['title']" />
+      </div>
+      <div *ngIf="selectedElement['label']" class="form-group">
+        <label>Label</label>
+        <input type="text" [(ngModel)]="selectedElement['label']" />
+      </div>
+      <div *ngIf="selectedElement['placeholder']" class="form-group">
+        <label>Placeholder</label>
+        <input type="text" [(ngModel)]="selectedElement['placeholder']" />
+      </div>
+      <div *ngIf="selectedElement['message']" class="form-group">
+        <label>Messaggio</label>
+        <textarea [(ngModel)]="selectedElement['message']"></textarea>
+      </div>
+      <div *ngIf="selectedElement['flex']" class="form-group">
+        <label>Flex</label>
+        <input type="number" [(ngModel)]="selectedElement['flex']" />
+      </div>
+      <div *ngIf="selectedElement['width']" class="form-group">
+        <label>Larghezza</label>
+        <input
+          type="text"
+          [(ngModel)]="selectedElement['width']"
+          placeholder="es. 250px, 40%"
+        />
+      </div>
+    </div>
+
+    <div class="panel-divider"></div>
+
+    <div class="panel-header">📋 JSON Config</div>
+    <div class="json-output">
+      <textarea [value]="getJSON()" readonly></textarea>
+      <div class="button-group">
+        <button (click)="copyJSON()" class="btn-primary">Copia</button>
+        <button (click)="downloadJSON()" class="btn-primary">Scarica</button>
+        <button (click)="openImportDialog()" class="btn-secondary">
+          📥 Carica
+        </button>
+      </div>
+      <input
+        #fileInput
+        type="file"
+        accept=".json"
+        (change)="onFileSelected($event)"
+        style="display: none"
+      />
+    </div>
+  </div>
+</div>
+
+<ng-template #renderChildren let-children="children" let-parent="parent">
+  <div
+    *ngFor="let child of children; let idx = index"
+    class="canvas-child"
+    [ngClass]="{ selected: selectedElement === child }"
+    (click)="selectElement(child)"
+    cdkDrag
+  >
+    <div class="element-header">
+      {{ child.type }} <small>#{{ child.id }}</small>
+      <button (click)="removeChild(parent, idx)" class="btn-remove">✕</button>
+    </div>
+    <div
+      *ngIf="child.children && child.children.length > 0"
+      class="children-container"
+      cdkDropList
+      [cdkDropListData]="child.children"
+      (cdkDropListDropped)="onChildDrop($event, child)"
+    >
+      <ng-container
+        *ngTemplateOutlet="
+          renderChildren;
+          context: { children: child.children, parent: child }
+        "
+      ></ng-container>
+    </div>
+    <div
+      *ngIf="!child.children || child.children.length === 0"
+      class="drop-zone"
+      cdkDropList
+      [cdkDropListData]="child.children || []"
+      (cdkDropListDropped)="onChildDrop($event, child)"
+    >
+      Trascina figli qui
+    </div>
+  </div>
+</ng-template>

@@ -1,26 +1,26 @@
-import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { DynamicComponentApi } from '../common-components.interface';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-dynamic-input',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [CommonModule],
   templateUrl: './dynamic-input.component.html',
-  styleUrl: './dynamic-input.component.scss'
+  styleUrls: ['./dynamic-input.component.scss']
 })
-export class DynamicInputComponent {
-  id!: string;
-  value: any = '';
+export class DynamicInputComponent implements DynamicComponentApi {
+  @Input() id!: string;
+  @Input() label = '';
+  @Input() placeholder = '';
 
-  @Input() label: string = '';
-  @Input() placeholder: string = '';
+  value = '';
 
   getValue() {
     return this.value;
   }
 
-  setValue(val: any) {
-    this.value = val;
+  setValue(v: any) {
+    this.value = String(v ?? '');
   }
 }
