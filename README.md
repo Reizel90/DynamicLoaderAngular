@@ -1,5 +1,85 @@
 # DynamicLoaderAngular
-progetto per il caricamento dinamico dinamico degli elementi di una pagina
+
+Progetto Angular che dimostra un **sistema di pagine dinamiche** basato su:
+- **Builder**: interfaccia grafica per comporre una pagina (layout + componenti).
+- **Registry/Map**: una mappa unica dei componenti disponibili (usata sia dal Builder che dal Renderer).
+- **Dynamic Renderer**: renderizza una pagina a runtime a partire da una configurazione JSON.
+- **View**: selezione delle configurazioni/pagine da mostrare.
+
+Struttura principale (cartelle rilevanti):
+- `src/app/builder` → editor visuale della pagina (composizione e struttura)
+- `src/app/common-components` → libreria di componenti “renderizzabili”
+- `src/app/services/components-map.service.ts` → registry centrale dei componenti
+- `src/app/dynamic-renderer` → rendering della configurazione
+- `src/app/view` → selettore configurazioni / pagina di preview
+
+> Nota: le configurazioni di esempio sono in `src/app/builder/page-configs.ts`. :contentReference[oaicite:1]{index=1}
+
+---
+
+## Come funziona il flusso (alto livello)
+
+### 1) Registry unico (components map)
+Il servizio `components-map.service.ts` rappresenta **l’unica sorgente di verità** sui componenti disponibili:
+- elenco componenti (palette del builder)
+- associazione `type` → classe Angular (per il rendering)
+- (opzionale) metadati di configurazione (label, proprietà supportate, default)
+
+### 2) Builder (creazione)
+Il Builder permette di costruire una “pagina” come **albero/struttura**:
+- layout (es. Section/Column)
+- elementi leaf (es. Input, Checkbox, Message, Button, ecc.)
+La pagina prodotta è (o può essere) serializzabile come JSON e salvabile.
+
+### 3) Renderer (esecuzione)
+Il Dynamic Renderer riceve la configurazione (JSON o oggetto) e:
+- risolve ogni nodo in un componente tramite `components-map.service`
+- crea dinamicamente i componenti
+- applica le proprietà (binding “statico” o “dinamico”)
+- renderizza ricorsivamente eventuali `children` (layout annidati)
+
+### 4) View (selezione)
+La View è il “contenitore” per:
+- scegliere quale config mostrare (es. da `page-configs.ts`)
+- inviare la config al renderer (preview)
+- (opzionale) aprire il builder sulla config selezionata
+
+---
+
+## Punti chiave del progetto
+
+- **Separazione delle responsabilità**
+  - `common-components`: componenti UI
+  - `builder`: UI di editing
+  - `dynamic-renderer`: UI di rendering dinamico
+  - `services`: registry e servizi condivisi
+
+- **Contratto comune dei componenti**
+  I componenti dinamici dovrebbero condividere un’interfaccia (presente in `common-components.interface.ts`)
+  per garantire input coerenti e supporto ai children dove necessario. :contentReference[oaicite:2]{index=2}
+
+---
+
+## Avvio progetto
+
+Classico Angular:
+- `npm install`
+- `npm start` (o `ng serve`)
+
+---
+
+## Dove mettere mano se vuoi estendere
+
+- Aggiungere un nuovo componente dinamico:
+  1) crealo in `src/app/common-components/<nome>`
+  2) registralo nel `components-map.service.ts` (type + classe + metadati)
+  3) se deve supportare children (layout), implementa lo stesso “contratto” dei container (es. Section/Column)
+
+- Aggiungere una nuova pagina demo:
+  - aggiungila a `src/app/builder/page-configs.ts` :contentReference[oaicite:3]{index=3}
+
+
+
 +-- .
 |   +-- src
 |   |   +-- app
